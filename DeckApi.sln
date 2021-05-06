@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeckApi", "DeckApi\DeckApi.csproj", "{AA4FC025-5F46-4ACF-81BC-C1ED42F37C82}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardLib", "CardLib\CardLib.csproj", "{6CDEFC44-E0FE-442C-889D-922130EA6C55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardLibTests", "CardLibTests\CardLibTests.csproj", "{6F6DB786-23A7-43B5-9C46-66FEF52F244A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AA4FC025-5F46-4ACF-81BC-C1ED42F37C82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA4FC025-5F46-4ACF-81BC-C1ED42F37C82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA4FC025-5F46-4ACF-81BC-C1ED42F37C82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA4FC025-5F46-4ACF-81BC-C1ED42F37C82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CDEFC44-E0FE-442C-889D-922130EA6C55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CDEFC44-E0FE-442C-889D-922130EA6C55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CDEFC44-E0FE-442C-889D-922130EA6C55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CDEFC44-E0FE-442C-889D-922130EA6C55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F6DB786-23A7-43B5-9C46-66FEF52F244A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F6DB786-23A7-43B5-9C46-66FEF52F244A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F6DB786-23A7-43B5-9C46-66FEF52F244A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F6DB786-23A7-43B5-9C46-66FEF52F244A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
