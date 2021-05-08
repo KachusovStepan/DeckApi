@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,11 +9,11 @@ namespace DeckApi.Services
 {
     public class InMemoryDeckRepository : IDeckRepository
     {
-        private Dictionary<string, Deck> deckDict;
+        private ConcurrentDictionary<string, Deck> deckDict;
         public readonly string ShuffleType;
         private ShuffleCards shuffle;
 
-        public InMemoryDeckRepository(string shuffleType="Simple")
+        public InMemoryDeckRepository(string shuffleType = "Simple")
         {
             ShuffleType = shuffleType;
             switch (shuffleType)
@@ -26,30 +27,18 @@ namespace DeckApi.Services
                 default:
                     throw new ArgumentException($"Unrecognized Shuffle Type: {shuffleType}");
             }
-            deckDict = new Dictionary<string, Deck>();
+
+            deckDict = new ConcurrentDictionary<string, Deck>();
         }
-        
+
         public async Task<bool> CreateNewDeck(string name)
         {
-            if (deckDict.ContainsKey(name))
-            {
-                return false;
-            }
-
-            var newDeck = new Deck();
-            deckDict[name] = newDeck;
-            return true;
+            return deckDict.TryAdd(name, new Deck());
         }
 
         public async Task<bool> DeleteDeck(string name)
         {
-            if (!deckDict.ContainsKey(name))
-            {
-                return false;
-            }
-
-            deckDict.Remove(name);
-            return true;
+            return deckDict.TryRemove(name, out Deck removedDeck);
         }
 
         public async Task<List<string>> GetDeckNames()
@@ -59,23 +48,23 @@ namespace DeckApi.Services
 
         public async Task<bool> ShuffleDeck(string name)
         {
-            if (!deckDict.ContainsKey(name))
+            if (deckDict.TryGetValue(name, out Deck deck))
             {
-                return false;
+                deck.Shuffle(shuffle);
+                return true;
             }
 
-            deckDict[name].Shuffle(shuffle);
-            return true;
+            return false;
         }
 
         public async Task<Deck> GetDeck(string name)
         {
-            if (!deckDict.ContainsKey(name))
+            if (deckDict.TryGetValue(name, out Deck deck))
             {
-                return null;
+                return deck;
             }
 
-            return deckDict[name];
+            return null;
         }
     }
 }
