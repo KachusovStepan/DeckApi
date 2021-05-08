@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CardLib;
 using NUnit.Framework;
 
@@ -34,7 +35,7 @@ namespace CardLibTests
             Assert.IsTrue(CardsAreOrdered(deck.Cards));
         }
 
-        private bool CardsAreOrdered(Card[] cards)
+        private bool CardsAreOrdered(List<Card> cards)
         {
             var suitCount = Enum.GetNames(typeof(CardSuit)).Length;
             var rankCount = Enum.GetNames(typeof(CardRank)).Length;

@@ -11,7 +11,7 @@ namespace DeckApi.Services
     {
         private ConcurrentDictionary<string, Deck> deckDict;
         public readonly string ShuffleType;
-        private ShuffleCards shuffle;
+        private ShuffleCards<Card> shuffle;
 
         public InMemoryDeckRepository(string shuffleType = "Simple")
         {
