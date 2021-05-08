@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading.Tasks;
 using CardLib;
 
-namespace DeckApi.Models
+namespace DeckApi.Services
 {
     public class InMemoryDeckRepository : IDeckRepository
     {
@@ -29,7 +29,7 @@ namespace DeckApi.Models
             deckDict = new Dictionary<string, Deck>();
         }
         
-        public bool CreateNewDeck(string name)
+        public async Task<bool> CreateNewDeck(string name)
         {
             if (deckDict.ContainsKey(name))
             {
@@ -41,7 +41,7 @@ namespace DeckApi.Models
             return true;
         }
 
-        public bool DeleteDeck(string name)
+        public async Task<bool> DeleteDeck(string name)
         {
             if (!deckDict.ContainsKey(name))
             {
@@ -52,12 +52,12 @@ namespace DeckApi.Models
             return true;
         }
 
-        public List<string> GetDeckNames()
+        public async Task<List<string>> GetDeckNames()
         {
             return deckDict.Keys.ToList();
         }
 
-        public bool ShuffleDeck(string name)
+        public async Task<bool> ShuffleDeck(string name)
         {
             if (!deckDict.ContainsKey(name))
             {
@@ -68,7 +68,7 @@ namespace DeckApi.Models
             return true;
         }
 
-        public Deck GetDeck(string name)
+        public async Task<Deck> GetDeck(string name)
         {
             if (!deckDict.ContainsKey(name))
             {

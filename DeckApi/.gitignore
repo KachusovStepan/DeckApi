@@ -13,6 +13,7 @@
 *.user
 .vs/
 .idea/
+logs/
 [Bb]in/
 [Oo]bj/
 _UpgradeReport_Files/
