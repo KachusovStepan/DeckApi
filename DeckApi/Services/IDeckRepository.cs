@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using CardLib;
 
-namespace DeckApi.Models
+namespace DeckApi.Services
 {
     public interface IDeckRepository
     {

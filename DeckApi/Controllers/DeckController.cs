@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using DeckApi.Logging;
-using DeckApi.Models;
+using DeckApi.Services;
 
 namespace DeckApi.Controllers
 {
@@ -12,77 +12,96 @@ namespace DeckApi.Controllers
     public class DeckController : Controller
     {
         private IDeckRepository repository;
+        private ILoggerManager logger;
         
-        public DeckController(IDeckRepository repository)
+        public DeckController(IDeckRepository repository, ILoggerManager logger)
         {
             this.repository = repository;
-        }
-        
-        [HttpGet]
-        [Route("test/{name}")]
-        public IEnumerable<string> Test(string name)
-        {
-            return new string[] {name};
-        }
-        
-        [HttpPost]
-        [Route("decks/{name}")]
-        public HttpResponseMessage CreateDeck(string name)
-        {
-            var succ = repository.CreateNewDeck(name);
-            var statusCode = succ ? HttpStatusCode.OK : HttpStatusCode.NotAcceptable;
-            return new HttpResponseMessage(statusCode);
-        }
-        
-        [HttpDelete]
-        [Route("decks/{name}")]
-        public HttpResponseMessage DeleteDeck(string name)
-        {
-            var succ = repository.DeleteDeck(name);
-            var statusCode = succ ? HttpStatusCode.OK : HttpStatusCode.NotAcceptable;
-            return new HttpResponseMessage(statusCode);
-        }
-        
-        [HttpGet]
-        [Route("decks/{name}/shuffle")]
-        public HttpResponseMessage ShuffleDeck(string name)
-        {
-            var succ = repository.ShuffleDeck(name);
-            var statusCode = succ ? HttpStatusCode.OK : HttpStatusCode.NotAcceptable;
-            return new HttpResponseMessage(statusCode);
+            this.logger = logger;
         }
         
         [HttpGet]
         [Route("decks")]
-        public List<string> GetDeckNames()
+        public JsonResult GetDeckNames()
         {
+            logger.LogDebug("Request handled by GetDeckNames");
             var deckNames = repository.GetDeckNames();
-            return deckNames;
+            return Json(deckNames);
         }
         
         [HttpGet]
         [Route("decks/{name}")]
-        [Produces("application/json")]
-        public JsonResult GetDeckNames(string name)
+        public JsonResult GetDeck(string name)
         {
+            logger.LogDebug($"Get Deck {name}");
+            
             var deck = repository.GetDeck(name);
             if (deck is null)
             {
-                return Json(new {});
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return Json(new { Message = "Deck Not Fount" });
             }
             
-            var objs = deck.Cards.Select(card => new 
-                {
-                    Suit = card.Suit.ToString(),
-                    Rank =  card.Rank.ToString()
-                })
-                .ToList();
             var result = new
             {
                 Name = name,
-                Cards = objs
+                Cards = deck.Cards
             };
+            
             return Json(result);
+        }
+        
+        [HttpGet]
+        [Route("decks/{name}/shuffle")]
+        public JsonResult ShuffleDeck(string name)
+        {
+            logger.LogDebug($"Shuffle Deck {name}");
+            
+            var succ = repository.ShuffleDeck(name);
+            if (!succ)
+            {
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return Json(new { Message = "Deck Not Fount" });
+            }
+
+            return Json(new {Message = $"Deck {name} successfully shuffled"});
+        }
+        
+        [HttpPost]
+        [Route("decks/{name}")]
+        public JsonResult CreateDeck(string name)
+        {
+            logger.LogDebug($"Create Deck {name}");
+            
+            var succ = repository.CreateNewDeck(name);
+            if (!succ)
+            {
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return Json(new { Message = $"Can't create deck with name {name}" });
+            }
+            return Json(new
+                {
+                    Message = $"Deck {name} successfully created",
+                    Url = $"/api/decks/{name}"
+                });
+        }
+        
+        [HttpDelete]
+        [Route("decks/{name}")]
+        public JsonResult DeleteDeck(string name)
+        {
+            logger.LogDebug($"Delete Deck {name}");
+            
+            var succ = repository.DeleteDeck(name);
+            if (!succ)
+            {
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return Json(new { Message = $"Can't delete deck with name {name}" });
+            }
+            return Json(new
+                {
+                    Message = $"Deck {name} successfully deleted"
+                });
         }
     }
 }

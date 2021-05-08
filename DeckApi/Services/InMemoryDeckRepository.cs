@@ -4,7 +4,7 @@ using System.Linq;
 
 using CardLib;
 
-namespace DeckApi.Models
+namespace DeckApi.Services
 {
     public class InMemoryDeckRepository : IDeckRepository
     {
