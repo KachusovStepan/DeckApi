@@ -65,7 +65,7 @@ namespace DeckApi.Controllers
                 return Json(new { Message = "Deck Not Fount" });
             }
 
-            return Json(new {Message = $"Deck {name} successfully shuffled"});
+            return Json(new {Message = $"Deck {name} was successfully shuffled"});
         }
         
         [HttpPost]
@@ -80,9 +80,10 @@ namespace DeckApi.Controllers
                 Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return Json(new { Message = $"Can't create deck with name {name}" });
             }
+            
             return Json(new
                 {
-                    Message = $"Deck {name} successfully created",
+                    Message = $"Deck {name} was successfully created",
                     Url = $"/api/decks/{name}"
                 });
         }
@@ -99,9 +100,10 @@ namespace DeckApi.Controllers
                 Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return Json(new { Message = $"Can't delete deck with name {name}" });
             }
+            
             return Json(new
                 {
-                    Message = $"Deck {name} successfully deleted"
+                    Message = $"Deck {name} was successfully deleted"
                 });
         }
     }
