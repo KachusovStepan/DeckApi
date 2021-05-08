@@ -12,6 +12,7 @@ namespace DeckApiTests
 {
     public class DeckControllerTests
     {
+        private string deckName = "NewDeck";
         private DeckController CreateController()
         {
             var repo = new InMemoryDeckRepository();
@@ -25,7 +26,6 @@ namespace DeckApiTests
         {
             var controller = CreateController();
 
-            var deckName = "NewDeck";
             var createResp = await controller.CreateDeck(deckName);
             Assert.IsType<JsonResult>(createResp);
             
@@ -37,13 +37,30 @@ namespace DeckApiTests
             
             Assert.Equal(expected, actual);
         }
+        
+        [Fact]
+        public async Task ErrorOnCreateDeckWithExistingName()
+        {
+            var controller = CreateController();
+        
+            var creationResult = await controller.CreateDeck(deckName);
+            
+            var creationDuplicate = await controller.CreateDeck(deckName);
+            
+            Assert.IsType<JsonResult>(creationDuplicate);
+            string actual = JsonConvert.SerializeObject(creationDuplicate.Value);
+            string expected = JsonConvert.SerializeObject(new {
+                Message = $"Can't create deck with name {deckName}"
+            });
+            
+            Assert.Equal(actual, expected);
+        }
 
         [Fact]
         public async Task DeletesDeck()
         {
             var controller = CreateController();
 
-            var deckName = "NewDeck";
             var createResp = await controller.CreateDeck(deckName);
             
             var createDuplicateResp = await controller.DeleteDeck(deckName);
@@ -55,6 +72,21 @@ namespace DeckApiTests
             });
             
             Assert.Equal(expected, actual);
+        }
+        
+        [Fact]
+        public async Task ErrorOnDeletesDeckWhenNotExists()
+        {
+            var controller = CreateController();
+
+            var creationDuplicate = await controller.DeleteDeck(deckName);
+            Assert.IsType<JsonResult>(creationDuplicate);
+            
+            string actual = JsonConvert.SerializeObject(creationDuplicate.Value);
+            string expected = JsonConvert.SerializeObject(new {
+                Message = $"Can't delete deck with name {deckName}"
+            });
+            Assert.Equal(actual, expected);
         }
         
         [Fact]
@@ -87,13 +119,56 @@ namespace DeckApiTests
         {
             var controller = CreateController();
 
-            var deckName = "NewDeck";
             var resp = await controller.CreateDeck(deckName);
 
             var data = await controller.GetDeck(deckName);
             Assert.IsType<JsonResult>(data);
             string actual = JsonConvert.SerializeObject(data.Value);
             Assert.Contains(deckName, actual);
+        }
+        
+        [Fact]
+        public async Task GetDeckReturnsErrorIfNotExist()
+        {
+            var controller = CreateController();
+
+            var data = await controller.GetDeck(deckName);
+            Assert.IsType<JsonResult>(data);
+            string actual = JsonConvert.SerializeObject(data.Value);
+            string expected = JsonConvert.SerializeObject(new {
+                Message = "Deck Not Fount" 
+            });
+            Assert.Equal(actual, expected);
+        }
+        
+        [Fact]
+        public async Task AfterShuffleDeckGetDeckReturnsDifferent()
+        {
+            var controller = CreateController();
+
+            var resp = await controller.CreateDeck(deckName);
+            var beforeShuffleResp = await controller.GetDeck(deckName);
+            string actualBeforeShuffle = JsonConvert.SerializeObject(beforeShuffleResp.Value);
+            
+            var shuffleResp = await controller.ShuffleDeck(deckName);
+            
+            var afterShuffleResp = await controller.GetDeck(deckName);
+            string actualAfterShuffle = JsonConvert.SerializeObject(afterShuffleResp.Value);
+            
+            
+            Assert.NotEqual(actualBeforeShuffle, actualAfterShuffle);  
+        }
+        
+        [Fact]
+        public async Task ShuffleNotExistingDeckReturnsError()
+        {
+            var controller = CreateController();
+
+            var shuffleResp = await controller.ShuffleDeck(deckName);
+            
+            string shuffleMessage = JsonConvert.SerializeObject(shuffleResp.Value);
+            var expectedJson = JsonConvert.SerializeObject(new { Message = "Deck Not Fount" });
+            Assert.Equal(expectedJson, shuffleMessage);  
         }
     }
 }

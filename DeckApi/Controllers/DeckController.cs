@@ -37,19 +37,20 @@ namespace DeckApi.Controllers
             logger.LogDebug($"Get Deck {name}");
             
             var deck = await  repository.GetDeck(name);
-            if (deck is null)
+            if (deck != null)
             {
-                Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return Json(new { Message = "Deck Not Fount" });
+                return Json(new {
+                        Name = name,
+                        Cards = deck.Cards
+                    });
             }
             
-            var result = new
+            if (HttpContext != null)
             {
-                Name = name,
-                Cards = deck.Cards
-            };
-            
-            return Json(result);
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
+            }
+
+            return Json(new { Message = "Deck Not Fount" });
         }
         
         [HttpGet]
@@ -59,13 +60,17 @@ namespace DeckApi.Controllers
             logger.LogDebug($"Shuffle Deck {name}");
             
             var succ = await repository.ShuffleDeck(name);
-            if (!succ)
+            if (succ)
             {
-                Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return Json(new { Message = "Deck Not Fount" });
+                return Json(new {Message = $"Deck {name} was successfully shuffled"});
+            }
+            
+            if (HttpContext != null)
+            {
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
             }
 
-            return Json(new {Message = $"Deck {name} was successfully shuffled"});
+            return Json(new { Message = "Deck Not Fount" });
         }
         
         [HttpPost]
@@ -75,17 +80,20 @@ namespace DeckApi.Controllers
             logger.LogDebug($"Create Deck {name}");
             
             var succ = await repository.CreateNewDeck(name);
-            if (!succ)
+            if (succ)
             {
-                Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return Json(new { Message = $"Can't create deck with name {name}" });
+                return Json(new {
+                        Message = $"Deck {name} was successfully created",
+                        Url = $"/api/decks/{name}"
+                    });
             }
             
-            return Json(new
-                {
-                    Message = $"Deck {name} was successfully created",
-                    Url = $"/api/decks/{name}"
-                });
+            if (HttpContext != null)
+            {
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
+            }
+
+            return Json(new { Message = $"Can't create deck with name {name}" });
         }
         
         [HttpDelete]
@@ -95,16 +103,17 @@ namespace DeckApi.Controllers
             logger.LogDebug($"Delete Deck {name}");
             
             var succ = await repository.DeleteDeck(name);
-            if (!succ)
+            if (succ)
             {
-                Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return Json(new { Message = $"Can't delete deck with name {name}" });
+                return Json(new { Message = $"Deck {name} was successfully deleted" });
             }
             
-            return Json(new
-                {
-                    Message = $"Deck {name} was successfully deleted"
-                });
+            if (HttpContext != null)
+            {
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
+            }
+
+            return Json(new { Message = $"Can't delete deck with name {name}" });
         }
     }
 }
