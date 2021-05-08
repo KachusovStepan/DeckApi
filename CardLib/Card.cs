@@ -29,7 +29,7 @@ namespace CardLib
         Ace
     }
 
-    public class Card
+    public class Card : ICard
     {
         public readonly CardSuit Suit;
         public readonly CardRank Rank;

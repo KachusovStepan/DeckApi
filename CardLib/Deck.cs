@@ -1,19 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CardLib
 {
-    public class Deck
+    public class Deck : IDeck<Card>
     {
-        public readonly Card[] Cards = new Card[52];
+        public List<Card> Cards { get; }
 
         public bool Shuffled { get; private set; }
         public Deck()
         {
+            Cards = new List<Card>();
             FillDeck();
             Shuffled = false;
         }
 
-        public void Shuffle(ShuffleCards shuffle)
+        public void Shuffle(ShuffleCards<Card> shuffle)
         {
             shuffle(Cards);
             Shuffled = true;
@@ -27,7 +29,7 @@ namespace CardLib
             for (int s = 1; s < suitCount; s++)
             {
                 for (int r = 1; r < rankCount; r++)
-                    Cards[(s - 1) * (rankCount - 1) + r - 1] = new Card((CardSuit)s, (CardRank)r);
+                    Cards.Add(new Card((CardSuit)s, (CardRank)r));
             }
         }
     }
