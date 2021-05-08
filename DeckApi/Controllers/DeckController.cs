@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using DeckApi.Logging;
 using DeckApi.Services;
@@ -19,23 +20,23 @@ namespace DeckApi.Controllers
             this.repository = repository;
             this.logger = logger;
         }
-        
+
         [HttpGet]
         [Route("decks")]
-        public JsonResult GetDeckNames()
+        public async Task<JsonResult> GetDeckNames()
         {
             logger.LogDebug("Request handled by GetDeckNames");
-            var deckNames = repository.GetDeckNames();
+            var deckNames = await repository.GetDeckNames();
             return Json(deckNames);
         }
         
         [HttpGet]
         [Route("decks/{name}")]
-        public JsonResult GetDeck(string name)
+        public async Task<JsonResult> GetDeck(string name)
         {
             logger.LogDebug($"Get Deck {name}");
             
-            var deck = repository.GetDeck(name);
+            var deck = await  repository.GetDeck(name);
             if (deck is null)
             {
                 Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -53,11 +54,11 @@ namespace DeckApi.Controllers
         
         [HttpGet]
         [Route("decks/{name}/shuffle")]
-        public JsonResult ShuffleDeck(string name)
+        public async Task<JsonResult> ShuffleDeck(string name)
         {
             logger.LogDebug($"Shuffle Deck {name}");
             
-            var succ = repository.ShuffleDeck(name);
+            var succ = await repository.ShuffleDeck(name);
             if (!succ)
             {
                 Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -69,11 +70,11 @@ namespace DeckApi.Controllers
         
         [HttpPost]
         [Route("decks/{name}")]
-        public JsonResult CreateDeck(string name)
+        public async Task<JsonResult> CreateDeck(string name)
         {
             logger.LogDebug($"Create Deck {name}");
             
-            var succ = repository.CreateNewDeck(name);
+            var succ = await repository.CreateNewDeck(name);
             if (!succ)
             {
                 Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -88,11 +89,11 @@ namespace DeckApi.Controllers
         
         [HttpDelete]
         [Route("decks/{name}")]
-        public JsonResult DeleteDeck(string name)
+        public async Task<JsonResult> DeleteDeck(string name)
         {
             logger.LogDebug($"Delete Deck {name}");
             
-            var succ = repository.DeleteDeck(name);
+            var succ = await repository.DeleteDeck(name);
             if (!succ)
             {
                 Response.StatusCode = (int)HttpStatusCode.NotFound;

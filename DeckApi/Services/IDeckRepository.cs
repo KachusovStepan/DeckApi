@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CardLib;
 
 namespace DeckApi.Services
 {
     public interface IDeckRepository
     {
-        bool CreateNewDeck(string name);
-        bool DeleteDeck(string name);
-        List<string> GetDeckNames();
-        bool ShuffleDeck(string name);
-        Deck GetDeck(string name);
+        Task<bool> CreateNewDeck(string name);
+        Task<bool> DeleteDeck(string name);
+        Task<List<string>> GetDeckNames();
+        Task<bool> ShuffleDeck(string name);
+        Task<Deck> GetDeck(string name);
     }
 }
