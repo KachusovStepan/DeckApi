@@ -27,7 +27,12 @@ namespace DeckApi.Controllers
         {
             logger.LogDebug("Request handled by GetDeckNames");
             var deckNames = await repository.GetDeckNames();
-            return Json(deckNames);
+            return Json(new
+            {
+                status = "success",
+                message = "",
+                data = deckNames
+            });
         }
         
         [HttpGet]
@@ -39,10 +44,15 @@ namespace DeckApi.Controllers
             var deck = await  repository.GetDeck(name);
             if (deck != null)
             {
-                return Json(new {
-                        Name = name,
-                        Cards = deck.Cards
-                    });
+                return Json(new
+                {
+                    status = "success",
+                    message = "",
+                    data = new {
+                            name = name,
+                            cards = deck.Cards
+                        }
+                });
             }
             
             if (HttpContext != null)
@@ -50,7 +60,11 @@ namespace DeckApi.Controllers
                 Response.StatusCode = (int) HttpStatusCode.NotFound;
             }
 
-            return Json(new { Message = "Deck Not Fount" });
+            return Json(new
+            {
+                status = "failed",
+                message = "Deck Not Fount"
+            });
         }
         
         [HttpGet]
@@ -62,7 +76,11 @@ namespace DeckApi.Controllers
             var succ = await repository.ShuffleDeck(name);
             if (succ)
             {
-                return Json(new {Message = $"Deck {name} was successfully shuffled"});
+                return Json(new
+                {
+                    status = "success",
+                    message = "Deck was successfully shuffled"
+                });
             }
             
             if (HttpContext != null)
@@ -70,7 +88,11 @@ namespace DeckApi.Controllers
                 Response.StatusCode = (int) HttpStatusCode.NotFound;
             }
 
-            return Json(new { Message = "Deck Not Fount" });
+            return Json(new
+            {
+                status = "failed",
+                message = "Deck Not Fount"
+            });
         }
         
         [HttpPost]
@@ -82,10 +104,14 @@ namespace DeckApi.Controllers
             var succ = await repository.CreateNewDeck(name);
             if (succ)
             {
-                return Json(new {
-                        Message = $"Deck {name} was successfully created",
-                        Url = $"/api/decks/{name}"
-                    });
+                return Json(new
+                {
+                    status = "success",
+                    message = "Deck was successfully created",
+                    data = new {
+                        url = $"/api/decks/{name}"
+                    }
+                });
             }
             
             if (HttpContext != null)
@@ -93,7 +119,11 @@ namespace DeckApi.Controllers
                 Response.StatusCode = (int) HttpStatusCode.NotFound;
             }
 
-            return Json(new { Message = $"Can't create deck with name {name}" });
+            return Json(new
+            {
+                status = "failed",
+                message = "Can't create deck with this name"
+            });
         }
         
         [HttpDelete]
@@ -105,7 +135,11 @@ namespace DeckApi.Controllers
             var succ = await repository.DeleteDeck(name);
             if (succ)
             {
-                return Json(new { Message = $"Deck {name} was successfully deleted" });
+                return Json(new
+                {
+                    status = "success",
+                    message = "Deck was successfully deleted"
+                });
             }
             
             if (HttpContext != null)
@@ -113,7 +147,11 @@ namespace DeckApi.Controllers
                 Response.StatusCode = (int) HttpStatusCode.NotFound;
             }
 
-            return Json(new { Message = $"Can't delete deck with name {name}" });
+            return Json(new
+            {
+                status = "failed",
+                message = "Can't delete deck with this name"
+            });
         }
     }
 }

@@ -30,9 +30,13 @@ namespace DeckApiTests
             Assert.IsType<JsonResult>(createResp);
             
             string actual = JsonConvert.SerializeObject(createResp.Value);
-            string expected = JsonConvert.SerializeObject(new {
-                Message = $"Deck {deckName} was successfully created",
-                Url = $"/api/decks/{deckName}"
+            string expected = JsonConvert.SerializeObject(new
+            {
+                status = "success",
+                message = "Deck was successfully created",
+                data = new {
+                    url = $"/api/decks/{deckName}"
+                }
             });
             
             Assert.Equal(expected, actual);
@@ -49,8 +53,10 @@ namespace DeckApiTests
             
             Assert.IsType<JsonResult>(creationDuplicate);
             string actual = JsonConvert.SerializeObject(creationDuplicate.Value);
-            string expected = JsonConvert.SerializeObject(new {
-                Message = $"Can't create deck with name {deckName}"
+            string expected = JsonConvert.SerializeObject(new
+            {
+                status = "failed",
+                message = "Can't create deck with this name"
             });
             
             Assert.Equal(actual, expected);
@@ -67,8 +73,10 @@ namespace DeckApiTests
             
             Assert.IsType<JsonResult>(createDuplicateResp);
             string actual = JsonConvert.SerializeObject(createDuplicateResp.Value);
-            string expected = JsonConvert.SerializeObject(new {
-                Message = $"Deck {deckName} was successfully deleted"
+            string expected = JsonConvert.SerializeObject(new
+            {
+                status = "success",
+                message = "Deck was successfully deleted"
             });
             
             Assert.Equal(expected, actual);
@@ -83,8 +91,10 @@ namespace DeckApiTests
             Assert.IsType<JsonResult>(creationDuplicate);
             
             string actual = JsonConvert.SerializeObject(creationDuplicate.Value);
-            string expected = JsonConvert.SerializeObject(new {
-                Message = $"Can't delete deck with name {deckName}"
+            string expected = JsonConvert.SerializeObject(new
+            {
+                status = "failed",
+                message = "Can't delete deck with this name"
             });
             Assert.Equal(actual, expected);
         }
@@ -135,8 +145,10 @@ namespace DeckApiTests
             var data = await controller.GetDeck(deckName);
             Assert.IsType<JsonResult>(data);
             string actual = JsonConvert.SerializeObject(data.Value);
-            string expected = JsonConvert.SerializeObject(new {
-                Message = "Deck Not Fount" 
+            string expected = JsonConvert.SerializeObject(new
+            {
+                status = "failed",
+                message = "Deck Not Fount" 
             });
             Assert.Equal(actual, expected);
         }
@@ -167,7 +179,11 @@ namespace DeckApiTests
             var shuffleResp = await controller.ShuffleDeck(deckName);
             
             string shuffleMessage = JsonConvert.SerializeObject(shuffleResp.Value);
-            var expectedJson = JsonConvert.SerializeObject(new { Message = "Deck Not Fount" });
+            var expectedJson = JsonConvert.SerializeObject(new
+            {
+                status = "failed",
+                message = "Deck Not Fount"
+            });
             Assert.Equal(expectedJson, shuffleMessage);  
         }
     }

@@ -5,11 +5,100 @@ Author: Kachusov Stepan
 ## API (Interaction interface):
 
 | Action        | Method           | Endpoint  |
-| ------------- |:-------------:| :--------:|
+| ------------- |:-------------| :--------|
 | Create a named deck of cards | POST | api/decks/{name} | 
 | Remove a named deck of cards | DELETE | api/decks/{name} |
 | Get a list of deck names | GET | api/decks |
+| Get the deck | GET | api/decks/{name} |
 | Shuffle the deck | GET | api/decks/{name}/shuffle |
+
+## Response Examples
+### POST api/decks/{name}
+```
+{
+  "status": "success",
+  "message": "Deck was successfully created",
+  "data": {
+    "url": "/api/decks/my_new_deck"
+  }
+}
+```
+```
+{
+  "status": "failed",
+  "message": "Can\u0027t create deck with this name"
+}
+```
+### DELETE api/decks/{name}
+```
+{
+  "status": "success",
+  "message": "Deck was successfully deleted"
+}
+```
+```
+{
+  "status": "failed",
+  "message": "Can\u0027t delete deck with this name"
+}
+```
+### GET api/decks
+```
+{
+  "status": "success",
+  "message": "",      
+  "data": [
+    "deck_3",
+    "deck_1",
+    "deck_2"
+  ]
+}
+```
+
+### GET api/decks/{name}
+```
+{
+  "status": "success",
+  "message": "",
+  "data": {
+    "name": "deck_1",
+    "cards": [
+      {
+        "Suit": "Hearts",
+        "Rank": "Two"
+      },
+      {
+        "Suit": "Hearts",
+        "Rank": "Three"
+      },
+      ...
+      {
+        "Suit": "Spades",
+        "Rank": "Ace"
+      }
+    ]
+  }
+}
+```
+```
+{
+  "status": "failed",        
+  "message": "Deck Not Fount"
+}
+```
+### GET api/decks/{name}/shuffle
+```
+{
+  "status": "success",
+  "message": "Deck was successfully shuffled"
+}
+```
+```
+{
+  "status": "failed",
+  "message": "Deck Not Fount"
+}
+```
 
 <br>
 The shuffling algorithm is set through the application configuration.
